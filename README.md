@@ -1,0 +1,110 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Build, then break. A Claude Code skill. Build with restraint, then switch sides and try to break your own work." width="100%">
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="Licence: MIT" src="https://img.shields.io/badge/licence-MIT-0f063c"></a>
+  <img alt="Works with Claude Code" src="https://img.shields.io/badge/works%20with-Claude%20Code-599cff">
+  <a href="https://clarityclub.jiffi.co"><img alt="From Jiffi Clarity Club" src="https://img.shields.io/badge/from-Jiffi%20Clarity%20Club-fff58a"></a>
+</p>
+
+# Build, then break
+
+AI coding assistants have two bad habits. They build more than you asked for, and they call it done at the first green tick.
+
+This skill fixes both. It makes Claude Code build with restraint, then switch sides and try to break its own work before it tells you anything is finished.
+
+You don't need to be a developer to use it. You install it once and it runs in every project.
+
+## Install it in a minute
+
+Open Claude Code and paste this in:
+
+```text
+Please install the build-then-break skill for Claude Code from this public repo:
+https://github.com/jake-jiffi/build-then-break
+
+Install it at the user level so it works in every project, and set it up so you always use it:
+
+1. Before you install anything, read the skill's files and tell me in plain English what it does and whether anything in it runs commands or touches my files.
+
+2. Download the repo to a temporary folder (git clone, or the zip from GitHub if git isn't available). Copy its skills/build-then-break folder to ~/.claude/skills/build-then-break/ so SKILL.md sits directly in that folder, with the references/ folder beside it. On Windows, ~ is my user folder. If a build-then-break skill is already there, show me what would change and ask before replacing it. Delete the temporary folder when you're done.
+
+3. Add this section to ~/.claude/CLAUDE.md. If the file doesn't exist, create it. If it does exist, add the section at the end and don't change anything already in it.
+
+   ## Build, then break
+   For any task that writes, edits, refactors, debugs or reviews code, and before calling any plan or analysis done, use the build-then-break skill and follow it. Match effort to the stakes as the skill describes.
+
+4. Show me the final folder structure and the exact section you added to CLAUDE.md, then tell me to start a fresh session so it all loads.
+```
+
+Start a fresh session afterwards. That's it.
+
+Prefer to do it by hand, or have the zip instead? See [INSTALL.md](INSTALL.md).
+
+## What changes
+
+**Before.** You ask for a bug fix. You get the fix, a refactor you didn't ask for, new settings nobody needs, and "all tests pass".
+
+**After.** You get the smallest change that fixes it, a test that proves it, and a short report of what the AI tried to break and what held.
+
+A report looks like this:
+
+> `first_even` now returns `None` when no even number exists (was `IndexError` on empty and all-odd lists; test added for both). Held: negative evens. Open: should `2.0` count? The spec doesn't say.
+
+## How it works
+
+It picks a level first, so a typo fix stays cheap and a payments change gets the full drill.
+
+| Level | When | Build | Break |
+|---|---|---|---|
+| Trivial | Typo, rename, config value, obvious one-liner | Surgical change only | Run it. Nothing more. |
+| Standard | Feature, bug fix, refactor | All four build rules | The project's tests, plus the three attacks most likely to land |
+| High-stakes | Money, auth, data migrations, production deploys, security, anything hard to undo, or a plan someone will act on | All four rules, plan written as checked steps | The full drill, every relevant vector |
+
+### Build
+
+1. **Think first.** State the assumptions. Ask when two readings would change the outcome.
+2. **Simplest thing that works.** No features, settings or abstractions nobody asked for.
+3. **Surgical changes.** Touch only what the task needs. Match the existing style.
+4. **A goal you can check.** "Fix the bug" becomes a test that fails, then passes.
+
+### Break
+
+1. **State the claim exactly.** You can't attack a vague claim.
+2. **Attack where a subtle bug would hide.** Boundaries, hostile input, hidden assumptions, state, failure, scale, and what was asked against what was assumed.
+3. **Force a verdict on each attack.** It survives with a reason or a test, or it breaks and gets fixed.
+4. **Write the test you're slightly afraid to run.**
+5. **Stop when it survives a real attack**, not at the first green tick.
+
+It works on plans and decisions too. State the conclusion, argue the strongest opposite case properly, keep the conclusion only if it survives.
+
+The full skill is one short file: [skills/build-then-break/SKILL.md](skills/build-then-break/SKILL.md).
+
+## What's in the box
+
+```text
+skills/build-then-break/
+├── SKILL.md                      the skill
+└── references/
+    ├── examples.md               each build rule, shown in code
+    └── worked-example.md         a full break drill
+```
+
+No scripts. No network calls. It is instructions and examples, nothing else.
+
+## Using it
+
+Once it's installed with the CLAUDE.md section, you don't have to do anything. Claude Code uses it whenever it writes, edits or reviews code.
+
+To call it yourself, say "use build-then-break on this".
+
+## Credits
+
+- Build rules adapted from [karpathy-guidelines](https://github.com/forrestchang/andrej-karpathy-skills) (MIT), which turns Andrej Karpathy's observations on LLM coding pitfalls into four rules. `references/examples.md` comes from that project.
+- Break drill adapted from the adversarial-review skill in the Clarity starter pack.
+- Put together by [Jake Shelley](https://github.com/jake-jiffi) at [Jiffi](https://www.jiffi.co) for [Clarity Club](https://clarityclub.jiffi.co), where we help business people build with AI properly.
+
+## Licence
+
+[MIT](LICENSE). Use it, change it, share it.
